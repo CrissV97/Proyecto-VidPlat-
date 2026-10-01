@@ -14,6 +14,19 @@ from app.security import get_current_user
 router = APIRouter(tags=["Comments"])
 
 
+def serialize_comment(comment: Comment, session: Session):
+    user = session.get(User, comment.user_id)
+
+    return {
+        "id": comment.id,
+        "content": comment.content,
+        "user_id": comment.user_id,
+        "user_name": user.name if user else "Usuario",
+        "video_id": comment.video_id,
+        "created_at": comment.created_at
+    }
+
+
 @router.post(
     "/videos/{video_id}/comments",
     response_model=CommentResponse,
@@ -45,7 +58,7 @@ def create_comment(
     session.commit()
     session.refresh(comment)
 
-    return comment
+    return serialize_comment(comment, session)
 
 
 @router.get(
@@ -71,7 +84,10 @@ def get_comments(
         .order_by(Comment.created_at.desc())
     ).all()
 
-    return comments
+    return [
+        serialize_comment(comment, session)
+        for comment in comments
+    ]
 
 
 @router.put(
@@ -105,7 +121,7 @@ def update_comment(
     session.commit()
     session.refresh(comment)
 
-    return comment
+    return serialize_comment(comment, session)
 
 
 @router.delete("/comments/{comment_id}")
@@ -126,7 +142,7 @@ def delete_comment(
     if comment.user_id != current_user.id:
         raise HTTPException(
             status_code=403,
-            detail="No puedes eliminar este comentario"
+            detail="No puedes modificar este comentario"
         )
 
     session.delete(comment)
