@@ -1,0 +1,337 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+
+    background-color: #f1f8f3;
+    color: #1f2d24;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+/* =========================================================
+   NAVBAR
+========================================================= */
+
+.navbar {
+    min-height: 64px;
+
+    background-color: #d9f2df;
+
+    border-bottom: 1px solid #b8dfc2;
+
+    display: flex;
+    align-items: center;
+
+    padding: 10px 30px;
+    gap: 30px;
+}
+
+.navbar-logo {
+    font-size: 24px;
+    font-weight: bold;
+
+    color: #2e8b57;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   BUSCADOR
+========================================================= */
+
+.navbar-search {
+    flex: 1;
+
+    display: flex;
+    justify-content: center;
+
+    max-width: 650px;
+
+    margin: 0 auto;
+}
+
+.navbar-search input {
+    width: 100%;
+
+    padding: 10px 15px;
+
+    border: 1px solid #a8cfb2;
+
+    border-radius: 6px 0 0 6px;
+
+    font-size: 15px;
+
+    background-color: #ffffff;
+
+    outline: none;
+}
+
+.navbar-search input:focus {
+    border-color: #62a873;
+}
+
+.navbar-search button {
+    padding: 10px 20px;
+
+    border: 1px solid #62a873;
+    border-left: none;
+
+    background-color: #62a873;
+
+    color: white;
+
+    cursor: pointer;
+
+    border-radius: 0 6px 6px 0;
+
+    font-weight: bold;
+}
+
+.navbar-search button:hover {
+    background-color: #4f9862;
+}
+
+
+/* =========================================================
+   ACCIONES DEL NAVBAR
+========================================================= */
+
+.navbar-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    white-space: nowrap;
+}
+
+.navbar-actions a {
+    color: #2e7042;
+
+    font-weight: 500;
+}
+
+.navbar-actions a:hover {
+    color: #205d33;
+}
+
+.navbar-actions button {
+    padding: 9px 15px;
+
+    border: 1px solid #62a873;
+
+    background-color: #62a873;
+
+    color: white;
+
+    border-radius: 5px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+}
+
+.navbar-actions button:hover {
+    background-color: #4f9862;
+}
+
+.register-button {
+    padding: 9px 15px;
+
+    border: 1px solid #62a873;
+
+    color: #2e7042;
+
+    border-radius: 5px;
+
+    background-color: #eaf7ed;
+}
+
+.register-button:hover {
+    background-color: #ccebd4;
+}
+
+
+/* =========================================================
+   HOME
+========================================================= */
+
+.home-container {
+    max-width: 1200px;
+
+    margin: 0 auto;
+
+    padding: 30px;
+}
+
+.home-container h1 {
+    color: #2e7042;
+
+    margin-bottom: 10px;
+}
+
+
+/* =========================================================
+   GRID DE VIDEOS
+========================================================= */
+
+.video-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 25px;
+
+    margin-top: 25px;
+}
+
+
+/* =========================================================
+   VIDEO CARD
+========================================================= */
+
+.video-card {
+    display: block;
+
+    background-color: #ffffff;
+
+    border: 1px solid #d5e8d9;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+}
+
+.video-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow: 0 5px 15px rgba(46, 112, 66, 0.15);
+}
+
+
+/* =========================================================
+   MINIATURA
+========================================================= */
+
+.video-thumbnail {
+    width: 100%;
+
+    height: 190px;
+
+    object-fit: cover;
+
+    display: block;
+
+    background-color: #d9f2df;
+}
+
+
+/* =========================================================
+   INFORMACIÓN DEL VIDEO
+========================================================= */
+
+.video-info {
+    padding: 15px;
+}
+
+.video-info h2 {
+    margin: 0 0 10px;
+
+    font-size: 18px;
+
+    color: #243b2c;
+}
+
+.video-uploader {
+    margin: 5px 0;
+
+    color: #438255;
+
+    font-size: 14px;
+
+    font-weight: 600;
+}
+
+.video-stats {
+    margin: 5px 0;
+
+    color: #718078;
+
+    font-size: 14px;
+}
+
+.video-date {
+    margin: 5px 0;
+
+    color: #87958c;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .video-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .navbar {
+        gap: 15px;
+
+        padding: 10px 20px;
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .navbar {
+        flex-wrap: wrap;
+
+        justify-content: center;
+    }
+
+    .navbar-logo {
+        width: 100%;
+
+        text-align: center;
+    }
+
+    .navbar-search {
+        order: 2;
+
+        width: 100%;
+    }
+
+    .navbar-actions {
+        order: 3;
+    }
+
+    .video-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .home-container {
+        padding: 20px;
+    }
+
+}
