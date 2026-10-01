@@ -14,10 +14,10 @@ class User(SQLModel, table=True):
 
 class Video(SQLModel, table=True):
     __tablename__ = "videos"
-
     id: int | None = Field(default=None, primary_key=True)
     title: str
     description: str
+    category: str = Field(default="General")
     video_url: str
     thumbnail_url: str
     views: int = Field(default=0)

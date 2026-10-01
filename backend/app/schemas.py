@@ -50,6 +50,7 @@ class TokenResponse(BaseModel):
 class VideoCreate(BaseModel):
     title: str
     description: str
+    category: str
     video_url: str
     thumbnail_url: str
 
@@ -57,6 +58,7 @@ class VideoCreate(BaseModel):
 class VideoUpdate(BaseModel):
     title: str | None = None
     description: str | None = None
+    category: str | None = None
     video_url: str | None = None
     thumbnail_url: str | None = None
 
@@ -65,16 +67,14 @@ class VideoResponse(BaseModel):
     id: int
     title: str
     description: str
+    category: str
     video_url: str
     thumbnail_url: str
     views: int
     user_id: int
     uploader: str
     created_at: datetime
-
-    model_config = ConfigDict(
-        from_attributes=True
-    )
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ============================================================

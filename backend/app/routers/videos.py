@@ -53,28 +53,14 @@ ALLOWED_THUMBNAIL_TYPES = {
 # SERIALIZAR VIDEO
 # ============================================================
 
-def serialize_video(
-    video: Video,
-    uploader_name: str
-) -> dict:
-    """
-    Convierte un video de la base de datos en la respuesta
-    que recibirá el frontend.
-
-    La base de datos almacena las claves de S3.
-    Las URLs presignadas se generan dinámicamente.
-    """
-
+def serialize_video(video: Video, uploader_name: str) -> dict:
     return {
         "id": video.id,
         "title": video.title,
         "description": video.description,
-        "video_url": get_video_url(
-            video.video_url
-        ),
-        "thumbnail_url": get_thumbnail_url(
-            video.thumbnail_url
-        ),
+        "category": video.category,
+        "video_url": get_video_url(video.video_url),
+        "thumbnail_url": get_thumbnail_url(video.thumbnail_url),
         "views": video.views,
         "user_id": video.user_id,
         "uploader": uploader_name,
@@ -182,13 +168,14 @@ def create_video(
         )
 
     video = Video(
-        title=video_data.title,
-        description=video_data.description,
-        video_url=video_data.video_url,
-        thumbnail_url=video_data.thumbnail_url,
-        user_id=current_user.id,
-        views=0
-    )
+    title=video_data.title,
+    description=video_data.description,
+    category=video_data.category,
+    video_url=video_data.video_url,
+    thumbnail_url=video_data.thumbnail_url,
+    user_id=current_user.id,
+    views=0
+)
 
     session.add(video)
     session.commit()

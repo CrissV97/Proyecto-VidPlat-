@@ -188,20 +188,17 @@ def get_user_videos(
 
     # Convertir los videos al formato de respuesta
     return [
-        {
-            "id": video.id,
-            "title": video.title,
-            "description": video.description,
-            "video_url": get_video_url(
-                video.video_url
-            ),
-            "thumbnail_url": get_thumbnail_url(
-                video.thumbnail_url
-            ),
-            "views": video.views,
-            "user_id": video.user_id,
-            "uploader": user.name,
-            "created_at": video.created_at
-        }
-        for video in videos
-    ]
+    {
+        "id": video.id,
+        "title": video.title,
+        "description": video.description,
+        "category": video.category,
+        "video_url": get_video_url(video.video_url),
+        "thumbnail_url": get_thumbnail_url(video.thumbnail_url),
+        "views": video.views,
+        "user_id": video.user_id,
+        "uploader": user.name,
+        "created_at": video.created_at
+    }
+    for video in videos
+]
