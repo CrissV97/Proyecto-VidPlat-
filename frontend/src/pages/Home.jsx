@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import VideoCard from "../components/VideoCard";
 
-import { getVideos } from "../api";
+import { getVideos } from "../services/api";
 
 
 function Home() {
@@ -13,6 +13,24 @@ function Home() {
     const [videos, setVideos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+
+    // Categoría seleccionada
+    const [selectedCategory, setSelectedCategory] = useState("Todos");
+
+
+    const categories = [
+        "Todos",
+        "General",
+        "Tecnología",
+        "Educación",
+        "Videojuegos",
+        "Música",
+        "Entretenimiento",
+        "Deportes",
+        "Ciencia",
+        "Arte",
+        "Noticias"
+    ];
 
 
     useEffect(() => {
@@ -40,21 +58,67 @@ function Home() {
     }
 
 
+    // Filtrar videos según la categoría seleccionada
+    const filteredVideos =
+        selectedCategory === "Todos"
+            ? videos
+            : videos.filter(
+                (video) =>
+                    video.category === selectedCategory
+            );
+
+
     return (
         <>
             <Navbar />
 
             <main className="home-container">
+
                 <h1>Videos</h1>
 
+
+                {/* SECCIÓN DE CATEGORÍAS */}
+                {!loading && !error && videos.length > 0 && (
+                    <section className="categories-section">
+
+                        <h2>Categorías</h2>
+
+                        <div className="categories-list">
+                            {categories.map((category) => (
+                                <button
+                                    key={category}
+                                    type="button"
+                                    className={
+                                        selectedCategory === category
+                                            ? "category-button active"
+                                            : "category-button"
+                                    }
+                                    onClick={() =>
+                                        setSelectedCategory(category)
+                                    }
+                                >
+                                    {category}
+                                </button>
+                            ))}
+                        </div>
+
+                    </section>
+                )}
+
+
+                {/* CARGANDO */}
                 {loading && (
                     <p>Cargando videos...</p>
                 )}
 
+
+                {/* ERROR */}
                 {error && (
                     <p>{error}</p>
                 )}
 
+
+                {/* NO HAY VIDEOS */}
                 {!loading &&
                     !error &&
                     videos.length === 0 && (
@@ -63,26 +127,63 @@ function Home() {
                         </p>
                     )}
 
+
+                {/* VIDEOS FILTRADOS */}
                 {!loading &&
                     !error &&
                     videos.length > 0 && (
-                        <div className="video-grid">
-                            {videos.map((video) => (
-                                <div
-                                    key={video.id}
-                                    onClick={() =>
-                                        handleVideoClick(
-                                            video.id
-                                        )
-                                    }
-                                >
-                                    <VideoCard
-                                        video={video}
-                                    />
+                        <section className="videos-section">
+
+                            <div className="videos-section-header">
+                                <h2>
+                                    {selectedCategory === "Todos"
+                                        ? "Todos los videos"
+                                        : `Videos de ${selectedCategory}`}
+                                </h2>
+
+                                <span className="video-count">
+                                    {filteredVideos.length}{" "}
+                                    {filteredVideos.length === 1
+                                        ? "video"
+                                        : "videos"}
+                                </span>
+                            </div>
+
+
+                            {filteredVideos.length === 0 ? (
+                                <div className="no-category-videos">
+                                    <p>
+                                        No hay videos disponibles en
+                                        la categoría{" "}
+                                        <strong>
+                                            {selectedCategory}
+                                        </strong>.
+                                    </p>
                                 </div>
-                            ))}
-                        </div>
+                            ) : (
+                                <div className="video-grid">
+
+                                    {filteredVideos.map((video) => (
+                                        <div
+                                            key={video.id}
+                                            onClick={() =>
+                                                handleVideoClick(
+                                                    video.id
+                                                )
+                                            }
+                                        >
+                                            <VideoCard
+                                                video={video}
+                                            />
+                                        </div>
+                                    ))}
+
+                                </div>
+                            )}
+
+                        </section>
                     )}
+
             </main>
         </>
     );

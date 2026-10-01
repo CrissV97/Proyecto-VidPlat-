@@ -1,41 +1,38 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-import { loginUser } from "../api";
-
+import { loginUser } from "../services/api";
 
 function Login() {
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
-        email: "",
-        password: ""
-    });
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-
-
-    function handleChange(event) {
-        const { name, value } = event.target;
-
-        setFormData((previous) => ({
-            ...previous,
-            [name]: value
-        }));
-    }
-
 
     async function handleSubmit(event) {
         event.preventDefault();
 
         setError("");
-        setLoading(true);
+
+        if (!email.trim() || !password) {
+            setError(
+                "El correo y la contraseña son obligatorios."
+            );
+            return;
+        }
 
         try {
-            const response = await loginUser(formData);
+            setLoading(true);
 
-            navigate(`/profile/${response.user_id}`);
+            await loginUser({
+                email: email.trim(),
+                password
+            });
+
+            navigate("/");
         } catch (error) {
             setError(error.message);
         } finally {
@@ -43,71 +40,107 @@ function Login() {
         }
     }
 
-
     return (
-        <div>
-            <h1>Iniciar sesión</h1>
+        <main className="auth-page">
 
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="email">
-                        Correo electrónico
-                    </label>
+            <section className="auth-card">
 
-                    <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                    />
+                <div className="auth-brand">
+                    <Link to="/">
+                        VidPlat
+                    </Link>
                 </div>
 
-                <div>
-                    <label htmlFor="password">
-                        Contraseña
-                    </label>
+                <div className="auth-header">
 
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
+                    <h1>
+                        Iniciar sesión
+                    </h1>
 
-                {error && (
                     <p>
-                        {error}
+                        Ingresa a tu cuenta para continuar
+                        disfrutando de VidPlat.
                     </p>
-                )}
 
-                <button
-                    type="submit"
-                    disabled={loading}
+                </div>
+
+                <form
+                    className="auth-form"
+                    onSubmit={handleSubmit}
                 >
-                    {loading
-                        ? "Iniciando sesión..."
-                        : "Iniciar sesión"}
-                </button>
-            </form>
 
-            <p>
-                ¿No tienes una cuenta?
-            </p>
+                    <div className="form-group">
 
-            <button
-                type="button"
-                onClick={() => navigate("/register")}
-            >
-                Registrarse
-            </button>
-        </div>
+                        <label htmlFor="login-email">
+                            Correo electrónico
+                        </label>
+
+                        <input
+                            id="login-email"
+                            type="email"
+                            value={email}
+                            onChange={(event) =>
+                                setEmail(event.target.value)
+                            }
+                            placeholder="ejemplo@correo.com"
+                            autoComplete="email"
+                        />
+
+                    </div>
+
+                    <div className="form-group">
+
+                        <label htmlFor="login-password">
+                            Contraseña
+                        </label>
+
+                        <input
+                            id="login-password"
+                            type="password"
+                            value={password}
+                            onChange={(event) =>
+                                setPassword(event.target.value)
+                            }
+                            placeholder="Ingresa tu contraseña"
+                            autoComplete="current-password"
+                        />
+
+                    </div>
+
+                    {error && (
+                        <div className="auth-error">
+                            {error}
+                        </div>
+                    )}
+
+                    <button
+                        type="submit"
+                        className="auth-submit"
+                        disabled={loading}
+                    >
+                        {loading
+                            ? "Iniciando sesión..."
+                            : "Iniciar sesión"}
+                    </button>
+
+                </form>
+
+                <div className="auth-footer">
+
+                    <span>
+                        ¿No tienes una cuenta?
+                    </span>
+
+                    <Link to="/register">
+                        Registrarse
+                    </Link>
+
+                </div>
+
+            </section>
+
+        </main>
     );
 }
-
 
 export default Login;

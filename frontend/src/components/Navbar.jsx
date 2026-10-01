@@ -5,7 +5,7 @@ import {
     getToken,
     getUserId,
     logoutUser
-} from "../api";
+} from "../services/api";
 
 
 function Navbar() {
