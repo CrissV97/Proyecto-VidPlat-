@@ -325,14 +325,16 @@ function VideoPlayer() {
                   {comments.map((comment) => (
                     <article key={comment.id} className="comment-card">
                       <div className="comment-avatar">
-    {(comment.user_name || `Usuario ${comment.user_id}`)
-        .charAt(0)
-        .toUpperCase()}
-</div>
+                        {(comment.user_name || `Usuario ${comment.user_id}`)
+                          .charAt(0)
+                          .toUpperCase()}
+                      </div>
 
                       <div className="comment-content">
                         <div className="comment-header">
-                          <strong>{comment.user_name || `Usuario ${comment.user_id}`}</strong>
+                          <strong>
+                            {comment.user_name || `Usuario ${comment.user_id}`}
+                          </strong>
 
                           <small>{formatCommentDate(comment.created_at)}</small>
                         </div>

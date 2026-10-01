@@ -93,9 +93,7 @@ class CommentResponse(BaseModel):
     id: int
     content: str
     user_id: int
+    user_name: str
     video_id: int
     created_at: datetime
-
-    model_config = ConfigDict(
-        from_attributes=True
-    )
+    model_config = ConfigDict(from_attributes=True)
