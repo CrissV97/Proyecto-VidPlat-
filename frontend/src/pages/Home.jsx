@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
@@ -6,188 +7,153 @@ import VideoCard from "../components/VideoCard";
 
 import { getVideos } from "../services/api";
 
-
 function Home() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const [videos, setVideos] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const [searchParams] = useSearchParams();
+  const searchTerm = searchParams.get("search") || "";
 
-    // Categoría seleccionada
-    const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const categories = [
+    "Todos",
+    "General",
+    "Tecnología",
+    "Educación",
+    "Videojuegos",
+    "Música",
+    "Entretenimiento",
+    "Deportes",
+    "Ciencia",
+    "Arte",
+    "Noticias",
+  ];
 
+  useEffect(() => {
+    async function loadVideos() {
+      try {
+        setLoading(true);
+        setError("");
 
-    const categories = [
-        "Todos",
-        "General",
-        "Tecnología",
-        "Educación",
-        "Videojuegos",
-        "Música",
-        "Entretenimiento",
-        "Deportes",
-        "Ciencia",
-        "Arte",
-        "Noticias"
-    ];
+        const videosData = await getVideos();
 
-
-    useEffect(() => {
-        async function loadVideos() {
-            try {
-                setLoading(true);
-                setError("");
-
-                const videosData = await getVideos();
-
-                setVideos(videosData);
-            } catch (error) {
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        loadVideos();
-    }, []);
-
-
-    function handleVideoClick(videoId) {
-        navigate(`/video/${videoId}`);
+        setVideos(videosData);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
     }
 
+    loadVideos();
+  }, []);
 
-    // Filtrar videos según la categoría seleccionada
-    const filteredVideos =
-        selectedCategory === "Todos"
-            ? videos
-            : videos.filter(
-                (video) =>
-                    video.category === selectedCategory
-            );
+  function handleVideoClick(videoId) {
+    navigate(`/video/${videoId}`);
+  }
 
+  const filteredVideos = videos.filter((video) => {
+    const matchesCategory =
+      selectedCategory === "Todos" || video.category === selectedCategory;
 
-    return (
-        <>
-            <Navbar />
+    const search = searchTerm.toLowerCase().trim();
 
-            <main className="home-container">
+    const matchesSearch =
+      search === "" ||
+      video.title.toLowerCase().includes(search) ||
+      video.description.toLowerCase().includes(search) ||
+      video.uploader.toLowerCase().includes(search) ||
+      video.category.toLowerCase().includes(search);
 
-                <h1>Videos</h1>
+    return matchesCategory && matchesSearch;
+  });
 
+  return (
+    <>
+      <Navbar />
 
-                {/* SECCIÓN DE CATEGORÍAS */}
-                {!loading && !error && videos.length > 0 && (
-                    <section className="categories-section">
+      <main className="home-container">
+        <h1>Videos</h1>
 
-                        <h2>Categorías</h2>
+        {/* SECCIÓN DE CATEGORÍAS */}
+        {!loading && !error && videos.length > 0 && (
+          <section className="categories-section">
+            <h2>Categorías</h2>
 
-                        <div className="categories-list">
-                            {categories.map((category) => (
-                                <button
-                                    key={category}
-                                    type="button"
-                                    className={
-                                        selectedCategory === category
-                                            ? "category-button active"
-                                            : "category-button"
-                                    }
-                                    onClick={() =>
-                                        setSelectedCategory(category)
-                                    }
-                                >
-                                    {category}
-                                </button>
-                            ))}
-                        </div>
+            <div className="categories-list">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  type="button"
+                  className={
+                    selectedCategory === category
+                      ? "category-button active"
+                      : "category-button"
+                  }
+                  onClick={() => setSelectedCategory(category)}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
 
-                    </section>
-                )}
+        {/* CARGANDO */}
+        {loading && <p>Cargando videos...</p>}
 
+        {/* ERROR */}
+        {error && <p>{error}</p>}
 
-                {/* CARGANDO */}
-                {loading && (
-                    <p>Cargando videos...</p>
-                )}
+        {/* NO HAY VIDEOS */}
+        {!loading && !error && videos.length === 0 && (
+          <p>No hay videos disponibles.</p>
+        )}
 
+        {/* VIDEOS FILTRADOS */}
+        {!loading && !error && videos.length > 0 && (
+          <section className="videos-section">
+            <div className="videos-section-header">
+              <h2>
+                {searchTerm
+                  ? `Resultados para "${searchTerm}"`
+                  : selectedCategory === "Todos"
+                    ? "Todos los videos"
+                    : `Videos de ${selectedCategory}`}
+              </h2>
 
-                {/* ERROR */}
-                {error && (
-                    <p>{error}</p>
-                )}
+              <span className="video-count">
+                {filteredVideos.length}{" "}
+                {filteredVideos.length === 1 ? "video" : "videos"}
+              </span>
+            </div>
 
-
-                {/* NO HAY VIDEOS */}
-                {!loading &&
-                    !error &&
-                    videos.length === 0 && (
-                        <p>
-                            No hay videos disponibles.
-                        </p>
-                    )}
-
-
-                {/* VIDEOS FILTRADOS */}
-                {!loading &&
-                    !error &&
-                    videos.length > 0 && (
-                        <section className="videos-section">
-
-                            <div className="videos-section-header">
-                                <h2>
-                                    {selectedCategory === "Todos"
-                                        ? "Todos los videos"
-                                        : `Videos de ${selectedCategory}`}
-                                </h2>
-
-                                <span className="video-count">
-                                    {filteredVideos.length}{" "}
-                                    {filteredVideos.length === 1
-                                        ? "video"
-                                        : "videos"}
-                                </span>
-                            </div>
-
-
-                            {filteredVideos.length === 0 ? (
-                                <div className="no-category-videos">
-                                    <p>
-                                        No hay videos disponibles en
-                                        la categoría{" "}
-                                        <strong>
-                                            {selectedCategory}
-                                        </strong>.
-                                    </p>
-                                </div>
-                            ) : (
-                                <div className="video-grid">
-
-                                    {filteredVideos.map((video) => (
-                                        <div
-                                            key={video.id}
-                                            onClick={() =>
-                                                handleVideoClick(
-                                                    video.id
-                                                )
-                                            }
-                                        >
-                                            <VideoCard
-                                                video={video}
-                                            />
-                                        </div>
-                                    ))}
-
-                                </div>
-                            )}
-
-                        </section>
-                    )}
-
-            </main>
-        </>
-    );
+            {filteredVideos.length === 0 ? (
+              <div className="no-category-videos">
+                <p>
+                  No hay videos disponibles en la categoría{" "}
+                  <strong>{selectedCategory}</strong>.
+                </p>
+              </div>
+            ) : (
+              <div className="video-grid">
+                {filteredVideos.map((video) => (
+                  <div
+                    key={video.id}
+                    onClick={() => handleVideoClick(video.id)}
+                  >
+                    <VideoCard video={video} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+      </main>
+    </>
+  );
 }
-
 
 export default Home;
